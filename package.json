@@ -1,7 +1,7 @@
 {
   "name": "@stswoon/opencode-plugin",
   "version": "1.0.0",
-  "description": "OpenCode plugin: workflow skills multi-plan/multi-impl/multi-impl-v3 and subagents analyst/dev/qa/lead",
+  "description": "OpenCode plugin: workflow skills multi-plan/multi-impl/multi-impl2/multi-impl-v3 and subagents analyst/dev/qa/lead",
   "type": "module",
   "main": "./plugin.js",
   "exports": {

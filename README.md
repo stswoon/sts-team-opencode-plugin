@@ -2,7 +2,7 @@
 
 Пакет для [OpenCode](https://opencode.ai): рабочий цикл **спека → стори → dev → QA → Lead** подключается одним плагином.
 
-Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты.
+Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl2,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты. Формулировки проект-агностик: источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
 
 ## Что внутри
 
@@ -11,11 +11,12 @@
 | `plugin.js` | Плагин OpenCode: регистрирует скилы, субагентов и команды |
 | `skills/multi-plan/` | Скил планирования: спека + нарезка сторей (`SKILL.md`, `prompt-analyst.md`, `story-template.md`) |
 | `skills/multi-impl/` | Скил реализации: волна Dev → QA → Lead (`SKILL.md`, `prompt-dev.md`, `prompt-qa.md`, `prompt-lead.md`) |
+| `skills/multi-impl2/` | Скил непрерывного цикла: волна за волной через `multi-impl`, пока есть готовые стори и нет блокеров |
 | `skills/multi-impl-v3/` | Скил-планировщик слотов: 4 стори в работе, без волн |
 | `agents/` | Роли `analyst`, `dev`, `qa`, `lead` (тело файла — системный промпт) |
-| `commands/` | Обёртки `/multi-plan`, `/multi-impl`, `/multi-impl-v3` с передачей `$ARGUMENTS` |
+| `commands/` | Обёртки `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` с передачей `$ARGUMENTS` |
 
-Скилы `myimpl2` (волны подряд) и `mymarket` в пакет не входят — добавь копированием, если понадобятся: `skills/<имя>/` + `agents/<роль>.md`.
+Скил `mymarket` в пакет не входит — добавь копированием, если понадобится: `skills/<имя>/` + `agents/<роль>.md`.
 
 ## Что делает плагин
 
@@ -23,9 +24,9 @@
 
 Один раз за инстанс, в config-hook (OpenCode применяет его до инициализации агентов и скилов — `InstanceBootstrap`: «Plugin can mutate config so it has to be initialized before anything else»):
 
-1. добавляет `<пакет>/skills` в `skills.paths` — скилы видны как `/multi-plan`, `/multi-impl`, `/multi-impl-v3`;
+1. добавляет `<пакет>/skills` в `skills.paths` — скилы видны как `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3`;
 2. регистрирует субагентов `analyst`, `dev`, `qa`, `lead` (промпт — тело `agents/*.md`);
-3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl-v3` (шаблоны — `commands/*.md`).
+3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` (шаблоны — `commands/*.md`).
 
 ## Требования
 
@@ -81,6 +82,7 @@
 ```
 /multi-plan <задача>        — analyst: спека + стори со статусами
 /multi-impl <Sxx …>         — одна волна: Dev → QA → Lead, статус «сделано» после LEAD_PASS
+/multi-impl2 <Sxx …>        — волны подряд, пока есть готовые стори и нет блокирующих замечаний
 /multi-impl-v3 <Sxx …>      — планировщик слотов: 4 стори в работе, новая берётся по освобождению
 /multi-impl без аргументов  — все готовые стори одной волной
 ```
@@ -101,9 +103,10 @@
 ## Отличия копии от `.cursor`-версии
 
 - Ссылки вида `.cursor/agents/*.md` заменены на имена агентов, которые регистрирует плагин.
+- Формулировки проект-агностик: «The Space Game», `remake.md`, `original/decompiled/**` и «декомпил» убраны; источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
 - В `agents/analyst.md` путь к шаблону стори — плейсхолдер `{{PACKAGE_DIR}}`, плагин подставляет абсолютный путь пакета.
 - Роли в frontmatter: `name` / `description` / `mode: subagent` (OpenCode-совместимо; вручную копируемые файлы тоже работают).
-- Остальной текст скилов и ролей — как в исходном проекте; при изменениях там синхронизируй копию вручную.
+- Остальной текст скилов и ролей — как в исходном проекте, кроме проект-агностик замен выше; при изменениях там синхронизируй копию вручную.
 
 ## Тест
 

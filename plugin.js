@@ -15,7 +15,13 @@ const DEFAULTS = {
   overwrite: true,
 }
 
-const COMMAND_NAMES = ["multi-plan", "multi-impl", "multi-impl-v3"]
+const commandNames = fs.existsSync(commandsDir)
+  ? fs
+      .readdirSync(commandsDir)
+      .filter((file) => file.endsWith(".md"))
+      .map((file) => file.slice(0, -3))
+      .sort()
+  : []
 
 function parseFrontmatter(text) {
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(text)
@@ -113,7 +119,7 @@ export default async function WorkflowPlugin(_input, options = {}) {
 
       if (settings.commands) {
         cfg.command ??= {}
-        for (const name of COMMAND_NAMES) {
+        for (const name of commandNames) {
           if (!settings.overwrite && cfg.command[name]) continue
           const command = loadCommand(name)
           if (command) cfg.command[name] = command
