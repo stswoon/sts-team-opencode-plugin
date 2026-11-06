@@ -1,0 +1,86 @@
+agents/lead.md
+  s_ea85ec3209d0a5::t_ed23b1f8937740 15
+agents/dev.md
+  s_ea85ec3209d0a5::t_26120a6f62cfc4 13
+agents/analyst.md
+  s_ea85ec3209d0a5::t_a5d8a7d00d07c6 15
+plugin.js
+  s_ea85ec3209d0a5::t_b704fb1f3ba8d2 75
+  s_ea85ec3209d0a5::t_94eaa8cd1cadcd 132-134,136,149
+  s_ea85ec3209d0a5::t_27655ba4b5a26e 89,92-95,97,156-159,161-164,186-204,239
+  s_ea85ec3209d0a5::t_4d6a44839c0719 11,58-74,76-82,84-88,90-91,99-130,139-146,152-155,165-168,170-175,178-185,205-238,240-243
+  s_ea85ec3209d0a5::t_d271c99400b2cf 96
+  s_ea85ec3209d0a5::t_ed4201fec3696f 131
+  s_ea85ec3209d0a5::t_65cba2df63ecb9 148
+skills/multi-impl/prompt-lead.md
+  s_ea85ec3209d0a5::t_bd09904789219b 1
+  s_ea85ec3209d0a5::t_a956f99719d16e 3
+README.md
+  s_ea85ec3209d0a5::t_d508c871b15143 110
+  s_ea85ec3209d0a5::t_b221b1c535d238 33,111
+  s_ea85ec3209d0a5::t_66fe13ee9685d8 72,79
+  s_ea85ec3209d0a5::t_2fc53baa4da250 1
+  s_ea85ec3209d0a5::t_f53e40c6d972f5 3,5,17,25,28-29,47,51,54-62,65,69,71,74,78,80,105,108-109,112
+  s_ea85ec3209d0a5::t_8d97aed286fed5 92
+  s_ea85ec3209d0a5::t_6db8da09433f73 107
+  s_ea85ec3209d0a5::t_2ae95430bdff27 27
+package.json
+  s_ea85ec3209d0a5::t_339e1020be9468 21
+skills/multi-plan/SKILL.md
+  s_ea85ec3209d0a5::t_366bbf096b809c 68,71-73,77
+  s_ea85ec3209d0a5::t_96d354690fb124 96
+commands/multi-impl.md
+  s_ea85ec3209d0a5::t_3d96d211d242fe 5
+skills/multi-impl/prompt-qa.md
+  s_ea85ec3209d0a5::t_1fd874ce99422b 3
+  s_ea85ec3209d0a5::t_6faea92a6211f0 1
+skills/multi-impl/prompt-dev.md
+  s_ea85ec3209d0a5::t_e32e5a3b2eae97 1
+  s_ea85ec3209d0a5::t_1865bb362faa3f 3
+agents/README.md
+  s_ea85ec3209d0a5::t_9f76c2628a9fb3 16
+  s_ea85ec3209d0a5::t_a02c3c633418c1 3
+skills/multi-impl-v3/SKILL.md
+  s_ea85ec3209d0a5::t_93669ecd044265 28,53
+skills/multi-plan/prompt-analyst.md
+  s_ea85ec3209d0a5::t_b0727660f8b480 1
+  s_ea85ec3209d0a5::t_4e5278aec69735 3
+commands/multi-plan.md
+  s_ea85ec3209d0a5::t_6581dc1169a688 5
+skills/multi-impl/SKILL.md
+  s_ea85ec3209d0a5::t_1fee092f2a34f4 77-78,80,87,89,93,99
+  s_ea85ec3209d0a5::t_ecd28cceda115f 39
+commands/multi-impl2.md
+  s_ea85ec3209d0a5::t_81f25665f197e3 5
+agents/qa.md
+  s_ea85ec3209d0a5::t_e2c92e8bdcb439 15
+test/plugin.test.mjs
+  s_ea85ec3209d0a5::t_17b6b774739e18 122
+  s_ea85ec3209d0a5::t_bde5df3e11f006 27,29,35,45-68,85,93-94,109-110,113-118,121,125-126,151,153,155,158,164-165,168,172,174-175,179-180,183-184,190
+  s_ea85ec3209d0a5::t_2b106de2f6fc5e 134,143,146
+  s_ea85ec3209d0a5::t_b4afd4d265b9cc 9,28,30-34,36-44,69-83,86,88-90,95-105,111-112,119,127,129,131-133,135-136,138-142,144-145,147-148,152,154,156-157,159-163,166-167,169,173,176,178,185-187,189,191
+  s_ea85ec3209d0a5::t_561e0552fb45a3 91
+commands/multi-impl-v3.md
+  s_ea85ec3209d0a5::t_0ddefd8e00c36e 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b6d4853a9ff90d78bad8f735a8a31f311c60a6f",
+  "prompts": {},
+  "humans": {
+    "h_06e01297fc405a": {
+      "author": "stswoon <xx@xx.xx>"
+    }
+  },
+  "sessions": {
+    "s_ea85ec3209d0a5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dfd1bdfffdwK9WAnBakWBhHj",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
