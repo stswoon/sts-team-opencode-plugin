@@ -1,4 +1,4 @@
-node_modules
-.temp
 .idea
-/.serena/
+.serena
+.temp
+node_modules
