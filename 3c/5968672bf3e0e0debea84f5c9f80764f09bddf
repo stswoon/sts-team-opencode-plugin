@@ -1,0 +1,44 @@
+commands/sts-team-plan.md
+  s_a34c15236df126::t_018d4c37d46f3a 1-7
+agents/lead.md
+  s_a34c15236df126::t_018d4c37d46f3a 2,8,10,14
+agents/README.md
+  s_a34c15236df126::t_7e587dd059d85b 5-10,12,14
+README.md
+  s_a34c15236df126::t_2be6e5e5d7ac26 30-33,101
+  s_a34c15236df126::t_779e0b79148f23 15-16,38,89,93-94,99-100,102,105,115,118
+  s_a34c15236df126::t_7e587dd059d85b 12-14,17-18,80
+package.json
+  s_a34c15236df126::t_779e0b79148f23 4
+commands/sts-team-impl.md
+  s_a34c15236df126::t_018d4c37d46f3a 1-7
+skills/sts-team-impl/SKILL.md
+  s_a34c15236df126::t_018d4c37d46f3a 1-217
+test/plugin.test.mjs
+  s_a34c15236df126::t_779e0b79148f23 97,114-115,119-121,136,144,147,157,167,169,178,181-182,184,188,193
+agents/qa.md
+  s_a34c15236df126::t_018d4c37d46f3a 2,14
+agents/dev.md
+  s_a34c15236df126::t_018d4c37d46f3a 3,14
+  s_a34c15236df126::t_e3f7e8a68a81d2 2
+agents/analyst.md
+  s_a34c15236df126::t_018d4c37d46f3a 2,14,27
+skills/sts-team-plan/SKILL.md
+  s_a34c15236df126::t_018d4c37d46f3a 1-113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3c5968672bf3e0e0debea84f5c9f80764f09bddf",
+  "prompts": {},
+  "sessions": {
+    "s_a34c15236df126": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dd0b9ebffdFSs6zxl6r4X9uH",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
