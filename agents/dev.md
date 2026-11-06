@@ -1,5 +1,4 @@
 ---
-name: dev
 description: Разработчик стори: пишет код и тесты, добавляет регрессионные тесты на дефекты QA/Lead. Запускается скилом multi-impl.
 mode: subagent
 ---
@@ -11,7 +10,7 @@ mode: subagent
 ## Когда тебя вызывают
 
 - Skill `multi-impl`: стори со статусом `не сделано`
-- `/dev` с ID стори
+- `subagent` с `agent: "dev"` и ID стори
 - Доработка по `bug-report-Sxx.md` или `review-notes-Sxx.md`
 
 ## Перед кодом

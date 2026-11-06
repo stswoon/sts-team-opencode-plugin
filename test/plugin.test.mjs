@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url"
 import plugin from "../plugin.js"
 
 const packageDir = path.dirname(fileURLToPath(new URL("../package.json", import.meta.url)))
+const packageDirPosix = packageDir.replaceAll("\\", "/")
 const skillsDir = path.join(packageDir, "skills")
 const agentsDir = path.join(packageDir, "agents")
 const commandsDir = path.join(packageDir, "commands")
@@ -23,78 +24,171 @@ function frontmatterName(text) {
   return name ? name[1] : undefined
 }
 
-async function apply(cfg, options) {
-  const hooks = await plugin({}, options)
-  await hooks.config(cfg)
-  return cfg
-}
+function makeContext({ options = {}, skills = [], agents = [], commands = [] } = {}) {
+  const skillMap = new Map(skills.map((skill) => [skill.id, skill]))
+  const agentMap = new Map(agents.map((agent) => [agent.id, agent]))
+  const commandMap = new Map(commands.map((command) => [command.name, command]))
+  const prompts = []
 
-test("registers skills path, four agents and four commands", async () => {
-  const cfg = await apply({})
-
-  assert.deepEqual(cfg.skills, { paths: [skillsDir] })
-
-  assert.deepEqual(Object.keys(cfg.agent).sort(), ["analyst", "dev", "lead", "qa"])
-  for (const [name, agent] of Object.entries(cfg.agent)) {
-    assert.equal(agent.name, name)
-    assert.equal(agent.mode, "subagent")
-    assert.ok(agent.description, `${name} has a description`)
-    assert.ok(agent.prompt.length > 200, `${name} has a full prompt`)
+  const ctx = {
+    options,
+    location: { directory: "/project" },
+    skill: {
+      list: async () => ({ location: {}, data: [...skillMap.values()] }),
+      transform: async (callback) => {
+        callback({
+          list: () => [...skillMap.values()],
+          get: (id) => skillMap.get(id),
+          add: (skill) => skillMap.set(skill.id, skill),
+          update: () => {},
+          remove: (id) => skillMap.delete(id),
+        })
+      },
+    },
+    agent: {
+      list: async () => ({ location: {}, data: [...agentMap.values()] }),
+      transform: async (callback) => {
+        callback({
+          list: () => [...agentMap.values()],
+          get: (id) => agentMap.get(id),
+          default: () => {},
+          update: (id, update) => {
+            const current = agentMap.get(id) ?? {
+              id,
+              name: id,
+              request: { settings: {}, headers: {}, body: {} },
+              mode: "primary",
+              hidden: false,
+              permissions: [],
+            }
+            if (!agentMap.has(id)) agentMap.set(id, current)
+            update(current)
+            current.id = id
+          },
+          remove: (id) => agentMap.delete(id),
+        })
+      },
+    },
+    command: {
+      list: async () => ({ location: {}, data: [...commandMap.values()] }),
+      transform: async (callback) => {
+        callback({ add: (command) => commandMap.set(command.name, command) })
+      },
+    },
+    session: {
+      prompt: async (input) => {
+        prompts.push(input)
+      },
+    },
   }
 
-  assert.deepEqual(Object.keys(cfg.command).sort(), ["multi-impl", "multi-impl-v3", "multi-impl2", "multi-plan"])
-  assert.match(cfg.command["multi-plan"].template, /\$ARGUMENTS/)
-  assert.match(cfg.command["multi-plan"].template, /multi-plan/)
-  assert.match(cfg.command["multi-impl2"].template, /multi-impl2/)
+  return { ctx, skills: skillMap, agents: agentMap, commands: commandMap, prompts }
+}
+
+test("exports a V2 plugin definition", () => {
+  assert.equal(plugin.id, "sts-team.sdd")
+  assert.equal(typeof plugin.setup, "function")
 })
 
-test("keeps descriptions with a colon and resolves {{PACKAGE_DIR}}", async () => {
-  const cfg = await apply({})
+test("registers four embedded skills", async () => {
+  const { ctx, skills } = makeContext()
+  await plugin.setup(ctx)
 
-  assert.match(cfg.agent.dev.description, /Разработчик стори: пишет код/)
-  const template = skillsDir.replaceAll("\\", "/") + "/multi-plan/story-template.md"
-  assert.ok(cfg.agent.analyst.prompt.includes(template))
-  assert.ok(!cfg.agent.analyst.prompt.includes("{{PACKAGE_DIR}}"))
+  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-impl2", "multi-plan"])
+  for (const skill of skills.values()) {
+    assert.equal(skill.autoinvoke, false)
+    assert.equal(skill.id, skill.name)
+    assert.ok(skill.description.length > 20)
+    assert.ok(skill.path.startsWith(packageDir))
+    assert.ok(skill.path.endsWith(path.join(skill.id, "SKILL.md")))
+    assert.ok(skill.content.length > 200)
+    assert.ok(!skill.content.startsWith("---"))
+  }
 })
 
-test("keeps existing skills paths and is idempotent", async () => {
-  const hooks = await plugin({}, {})
-  const cfg = { skills: { paths: ["/other"] } }
-  await hooks.config(cfg)
-  await hooks.config(cfg)
+test("registers four subagents through the agent transform", async () => {
+  const { ctx, agents } = makeContext()
+  await plugin.setup(ctx)
 
-  assert.deepEqual(cfg.skills.paths, ["/other", skillsDir])
+  assert.deepEqual([...agents.keys()].sort(), ["analyst", "dev", "lead", "qa"])
+  for (const agent of agents.values()) {
+    assert.equal(agent.mode, "subagent")
+    assert.ok(agent.description.length > 20)
+    assert.ok(agent.system.length > 200)
+    assert.ok(!agent.system.includes("{{PACKAGE_DIR}}"))
+  }
+
+  assert.ok(agents.get("analyst").system.includes(`${packageDirPosix}/skills/multi-plan/story-template.md`))
+  assert.match(agents.get("dev").description, /Разработчик стори: пишет код/)
 })
 
-test("supports the v2 skills array shape", async () => {
-  const cfg = await apply({ skills: ["/other"] })
+test("registers four commands and renders $ARGUMENTS", async () => {
+  const { ctx, commands, prompts } = makeContext()
+  await plugin.setup(ctx)
 
-  assert.deepEqual(cfg.skills, ["/other", skillsDir])
+  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-impl2", "multi-plan"])
+
+  const file = { uri: "file:///spec.md", mention: { start: 0, end: 3, text: "S01" } }
+  await commands.get("multi-plan").execute({
+    sessionID: "ses_test",
+    prompt: { text: "S01 $& $1", files: [file] },
+    delivery: "queue",
+  })
+
+  assert.equal(prompts.length, 1)
+  const sent = prompts[0]
+  assert.equal(sent.sessionID, "ses_test")
+  assert.equal(sent.delivery, "queue")
+  assert.ok(sent.text.includes('id: "multi-plan"'))
+  assert.ok(sent.text.includes("S01 $& $1"))
+  assert.ok(!sent.text.includes("$ARGUMENTS"))
+
+  const at = sent.text.indexOf("S01 $& $1")
+  assert.ok(at > 0)
+  assert.deepEqual(sent.files[0].mention, { start: at, end: at + 3, text: "S01" })
+})
+
+test("overwrite: false keeps existing skills, agents and commands", async () => {
+  const existingSkill = { id: "multi-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
+  const existingAgent = { id: "dev", name: "dev", description: "custom", mode: "subagent", system: "custom" }
+  const existingCommand = { name: "multi-plan", description: "custom" }
+  const { ctx, skills, agents, commands } = makeContext({
+    options: { overwrite: false },
+    skills: [existingSkill],
+    agents: [existingAgent],
+    commands: [existingCommand],
+  })
+  await plugin.setup(ctx)
+
+  assert.equal(skills.get("multi-plan"), existingSkill)
+  assert.equal(agents.get("dev"), existingAgent)
+  assert.equal(agents.get("dev").description, "custom")
+  assert.equal(commands.get("multi-plan"), existingCommand)
+  assert.ok(skills.has("multi-impl"))
+  assert.ok(agents.has("qa"))
+  assert.ok(commands.has("multi-impl"))
+})
+
+test("overwrite: true replaces changed skills and agents", async () => {
+  const existingSkill = { id: "multi-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
+  const existingAgent = { id: "dev", name: "dev", description: "custom", mode: "subagent", system: "custom" }
+  const { ctx, skills, agents } = makeContext({ skills: [existingSkill], agents: [existingAgent] })
+  await plugin.setup(ctx)
+
+  assert.notEqual(skills.get("multi-plan").content, "custom")
+  assert.notEqual(agents.get("dev").description, "custom")
+  assert.ok(agents.get("dev").system.length > 200)
 })
 
 test("options disable parts of the registration", async () => {
-  const cfg = await apply({}, { skills: false, commands: false })
+  const { ctx, skills, agents, commands } = makeContext({
+    options: { skills: false, agents: false, commands: false },
+  })
+  await plugin.setup(ctx)
 
-  assert.equal(cfg.skills, undefined)
-  assert.equal(cfg.command, undefined)
-  assert.ok(cfg.agent.lead)
-})
-
-test("overwrite: false leaves project agents and commands alone", async () => {
-  const existing = { agent: { dev: { description: "custom" } }, command: { "multi-plan": { template: "custom" } } }
-  const cfg = await apply(existing, { overwrite: false })
-
-  assert.deepEqual(cfg.agent.dev, { description: "custom" })
-  assert.deepEqual(cfg.command["multi-plan"], { template: "custom" })
-  assert.ok(cfg.agent.qa)
-})
-
-test("overwrite: true replaces project agents and commands", async () => {
-  const existing = { agent: { dev: { description: "custom" } }, command: { "multi-plan": { template: "custom" } } }
-  const cfg = await apply(existing, {})
-
-  assert.notEqual(cfg.agent.dev.description, "custom")
-  assert.notEqual(cfg.command["multi-plan"].template, "custom")
+  assert.equal(skills.size, 0)
+  assert.equal(agents.size, 0)
+  assert.equal(commands.size, 0)
 })
 
 test("every skill directory matches its frontmatter name", () => {

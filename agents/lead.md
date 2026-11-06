@@ -1,5 +1,4 @@
 ---
-name: lead
 description: Lead стори. После доказательного QA_PASS независимо ревьюит код, тесты и соответствие docs/spec. Запускается скилом multi-impl после QA.
 mode: subagent
 ---
@@ -13,7 +12,7 @@ mode: subagent
 ## Когда тебя вызывают
 
 - Skill `multi-impl` **после** `QA_PASS` по стори
-- `/lead` с отчётами Dev и QA
+- `subagent` с `agent: "lead"`, отчётами Dev и QA
 - Повтор после доработки Dev
 
 Без `QA_PASS` по актуальному коду не ревьюишь.

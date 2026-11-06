@@ -1,20 +1,20 @@
-# opencode-plugin
+# sts-team-opencode-plugin
 
-Пакет для [OpenCode](https://opencode.ai): рабочий цикл **спека → стори → dev → QA → Lead** подключается одним плагином.
+Пакет для [OpenCode](https://opencode.ai) **V2**: рабочий цикл **спека → стори → dev → QA → Lead** подключается одним плагином.
 
-Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl2,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты. Формулировки проект-агностик: источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
+Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl2,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты. Источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
 
 ## Что внутри
 
 | Путь | Что это |
 |------|---------|
-| `plugin.js` | Плагин OpenCode: регистрирует скилы, субагентов и команды |
+| `plugin.js` | Плагин OpenCode V2: регистрирует скилы, агентов и команды |
 | `skills/multi-plan/` | Скил планирования: спека + нарезка сторей (`SKILL.md`, `prompt-analyst.md`, `story-template.md`) |
 | `skills/multi-impl/` | Скил реализации: волна Dev → QA → Lead (`SKILL.md`, `prompt-dev.md`, `prompt-qa.md`, `prompt-lead.md`) |
 | `skills/multi-impl2/` | Скил непрерывного цикла: волна за волной через `multi-impl`, пока есть готовые стори и нет блокеров |
 | `skills/multi-impl-v3/` | Скил-планировщик слотов: 4 стори в работе, без волн |
 | `agents/` | Роли `analyst`, `dev`, `qa`, `lead` (тело файла — системный промпт) |
-| `commands/` | Обёртки `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` с передачей `$ARGUMENTS` |
+| `commands/` | Шаблоны `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` с `$ARGUMENTS` |
 
 Скил `mymarket` в пакет не входит — добавь копированием, если понадобится: `skills/<имя>/` + `agents/<роль>.md`.
 
@@ -22,15 +22,15 @@
 
 ![ag.drawio.png](ag.drawio.png)
 
-Один раз за инстанс, в config-hook (OpenCode применяет его до инициализации агентов и скилов — `InstanceBootstrap`: «Plugin can mutate config so it has to be initialized before anything else»):
+При загрузке, в `setup` V2-плагина:
 
-1. добавляет `<пакет>/skills` в `skills.paths` — скилы видны как `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3`;
-2. регистрирует субагентов `analyst`, `dev`, `qa`, `lead` (промпт — тело `agents/*.md`);
-3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` (шаблоны — `commands/*.md`).
+1. регистрирует субагентов `analyst`, `dev`, `qa`, `lead` через `ctx.agent.transform` (`editor.update` создаёт агента, если его ещё нет);
+2. регистрирует скилы через `ctx.skill.transform` — они доступны как `multi-plan`, `multi-impl`, `multi-impl2`, `multi-impl-v3` без копирования в проект;
+3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` через `ctx.command.transform`; `$ARGUMENTS` заменяется аргументами, а если плейсхолдера нет — аргументы дописываются в конец.
 
 ## Требования
 
-- OpenCode **>= 1.18.30** (config-hook с мутацией `cfg.skills`, `cfg.agent`, `cfg.command`). Проверено на desktop 1.18.31.
+- OpenCode **2.x** (V2 plugin API; код совместим с `@opencode/plugin` 2.2.x).
 - Проект со структурой `AGENTS.md` + `docs/spec/` + `docs/plan/` — как в `asteroid-defense-game`. `multi-plan` создаёт недостающие файлы при первом запуске.
 
 ## Подключение
@@ -44,38 +44,40 @@
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["file:///D:/mycode/opencode-plugin"]
+  "plugins": ["file:///D:/mycode/sts-team-opencode-plugin"]
 }
 ```
 
-Путь указывается на каталог пакета (`package.json` → `main`) или на файл:
+С опциями:
 
 ```json
-"plugin": ["file:///D:/mycode/opencode-plugin/plugin.js"]
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    {
+      "package": "file:///D:/mycode/sts-team-opencode-plugin",
+      "options": { "overwrite": true }
+    }
+  ]
+}
 ```
 
-Плагин локальный, поэтому путь чувствителен к переносу пакета. Для нескольких проектов сразу — глобальный конфиг.
-
-Опции передаются tuple-формой:
-
-```json
-"plugin": [["file:///D:/mycode/opencode-plugin", { "overwrite": false }]]
-```
+Путь указывается на **каталог** пакета (в нём `package.json` → `exports`). V2 пропускает локальный плагин, заданный отдельным файлом.
 
 | Опция | По умолчанию | Смысл |
 |-------|--------------|-------|
-| `skills` | `true` | добавлять `<пакет>/skills` в `skills.paths` |
+| `skills` | `true` | регистрировать встроенные скилы |
 | `agents` | `true` | регистрировать `analyst` / `dev` / `qa` / `lead` |
-| `commands` | `true` | регистрировать `/multi-plan`, `/multi-impl`, `/multi-impl-v3` |
-| `overwrite` | `true` | перекрывать одноимённых агентов и команды, объявленные в конфиге проекта; `false` — существующие не трогать |
+| `commands` | `true` | регистрировать `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` |
+| `overwrite` | `true` | перекрывать скилы, команды и агентов с теми же ID; `false` — существующие не трогать |
 
-После правки конфига **перезапустить OpenCode** — конфиг читается один раз при старте.
+Конфиг в V2 перечитывается без перезапуска. Если менялся код локального плагина, может понадобиться `/reload` или `opencode service restart`.
 
 ### B. Без плагина
 
-- Скилы: `"skills": { "paths": ["D:/mycode/opencode-plugin/skills"] }`.
-- Агенты: скопировать `agents/*.md` в `.opencode/agents/` (или `~/.config/opencode/agents/`) и заменить в `analyst.md` плейсхолдер `{{PACKAGE_DIR}}` на путь к пакету.
-- Команды: можно не копировать — каждый скил автоматически становится командой, а аргументы при отсутствии `$ARGUMENTS` дописываются в конец промпта. `commands/*.md` нужны, только если хочется явный шаблон.
+- Скилы: `"skills": ["D:/mycode/sts-team-opencode-plugin/skills"]`.
+- Агенты: скопировать `agents/*.md` в `.opencode/agents/` и заменить `{{PACKAGE_DIR}}` в `analyst.md` на путь к пакету. Либо описать роли в секции `agents` конфига.
+- Команды: скопировать `commands/*.md` в `.opencode/commands/` или вызывать скилы через `@multi-plan` / инструмент `skill` с `id: "multi-plan"`.
 
 ## Использование
 
@@ -87,7 +89,7 @@
 /multi-impl без аргументов  — все готовые стори одной волной
 ```
 
-Субагентов оркестратор запускает сам (Task); вручную — `/analyst`, `/dev`, `/qa`, `/lead`.
+Субагентов оркестратор запускает сам (инструмент `subagent`); вручную — тем же инструментом с `agent: "analyst"` / `"dev"` / `"qa"` / `"lead"`.
 
 ## Артефакты
 
@@ -100,13 +102,14 @@
 
 Путь оставлен от Cursor-версии, чтобы файлы не разъезжались между инструментами. Если `.cursor/` не нужен — замени путь в скилах и агентах на удобный.
 
-## Отличия копии от `.cursor`-версии
+## Отличия V2-версии
 
-- Ссылки вида `.cursor/agents/*.md` заменены на имена агентов, которые регистрирует плагин.
-- Формулировки проект-агностик: «The Space Game», `remake.md`, `original/decompiled/**` и «декомпил» убраны; источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
-- В `agents/analyst.md` путь к шаблону стори — плейсхолдер `{{PACKAGE_DIR}}`, плагин подставляет абсолютный путь пакета.
-- Роли в frontmatter: `name` / `description` / `mode: subagent` (OpenCode-совместимо; вручную копируемые файлы тоже работают).
-- Остальной текст скилов и ролей — как в исходном проекте, кроме проект-агностик замен выше; при изменениях там синхронизируй копию вручную.
+- Плагин больше не использует V1 `config`-хук и мутацию `cfg.skills` / `cfg.agent` / `cfg.command`: скилы, агенты и команды регистрируются через `ctx.skill.transform` / `ctx.agent.transform` / `ctx.command.transform`.
+- Конфиг: `plugin` → `plugins`; tuple `[path, options]` → объект `{ package, options }`.
+- В командах инструмент `skill` вызывается по `id`, а не по `name`.
+- ID агента берётся из имени файла `agents/*.md`; frontmatter `name` в V2 не нужен.
+- Ссылки вида `.cursor/agents/*.md` заменены на имена субагентов, которых регистрирует плагин.
+- Формулировки привязаны к проекту через `AGENTS.md`, `docs/spec/`, код и тесты.
 
 ## Тест
 

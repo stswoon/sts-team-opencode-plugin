@@ -8,20 +8,13 @@ const skillsDir = path.join(packageDir, "skills")
 const agentsDir = path.join(packageDir, "agents")
 const commandsDir = path.join(packageDir, "commands")
 
+const PLUGIN_ID = "sts-team.sdd"
 const DEFAULTS = {
   skills: true,
   agents: true,
   commands: true,
   overwrite: true,
 }
-
-const commandNames = fs.existsSync(commandsDir)
-  ? fs
-      .readdirSync(commandsDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => file.slice(0, -3))
-      .sort()
-  : []
 
 function parseFrontmatter(text) {
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(text)
@@ -62,69 +55,189 @@ function readMarkdown(file) {
   return parseFrontmatter(fs.readFileSync(file, "utf8"))
 }
 
-function loadAgents() {
-  const agents = []
-  for (const file of fs.readdirSync(agentsDir)) {
-    if (!file.endsWith(".md")) continue
-    const { data, body } = readMarkdown(path.join(agentsDir, file))
-    if (!data.name || !data.description) continue
-    agents.push({
-      name: data.name,
-      description: data.description,
-      mode: data.mode ?? "subagent",
-      prompt: body.replaceAll("{{PACKAGE_DIR}}", packageDirPosix),
+function loadSkills() {
+  return fs
+    .readdirSync(skillsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => {
+      const file = path.join(skillsDir, entry.name, "SKILL.md")
+      if (!fs.existsSync(file)) return undefined
+
+      const { data, body } = readMarkdown(file)
+      if (!data.description) return undefined
+
+      return {
+        id: entry.name,
+        name: data.name ?? entry.name,
+        description: data.description,
+        // V2 keeps accepting disable-model-invocation as a portability field,
+        // but embedded skills must map it to autoinvoke explicitly.
+        ...(String(data["disable-model-invocation"]).toLowerCase() === "true" ? { autoinvoke: false } : {}),
+        path: file,
+        content: body,
+      }
     })
-  }
-  return agents
+    .filter(Boolean)
 }
 
-function loadCommand(name) {
-  const file = path.join(commandsDir, `${name}.md`)
-  if (!fs.existsSync(file)) return undefined
-  const { data, body } = readMarkdown(file)
-  return {
-    description: data.description,
-    template: body.replaceAll("{{PACKAGE_DIR}}", packageDirPosix),
-  }
-}
+function loadAgents() {
+  return fs
+    .readdirSync(agentsDir)
+    .filter((file) => file.endsWith(".md") && file !== "README.md")
+    .map((file) => {
+      const name = path.basename(file, ".md")
+      const { data, body } = readMarkdown(path.join(agentsDir, file))
+      if (!data.description) return undefined
 
-export default async function WorkflowPlugin(_input, options = {}) {
-  const settings = { ...DEFAULTS, ...(options && typeof options === "object" ? options : {}) }
-  const agents = settings.agents ? loadAgents() : []
-
-  return {
-    config: async (cfg) => {
-      if (settings.skills) {
-        if (Array.isArray(cfg.skills)) {
-          if (!cfg.skills.includes(skillsDir)) cfg.skills.push(skillsDir)
-        } else {
-          const skills = (cfg.skills ??= {})
-          const paths = (skills.paths ??= [])
-          if (!paths.includes(skillsDir)) paths.push(skillsDir)
-        }
+      return {
+        name,
+        description: data.description,
+        mode: data.mode ?? "subagent",
+        prompt: body.replaceAll("{{PACKAGE_DIR}}", () => packageDirPosix),
       }
+    })
+    .filter(Boolean)
+}
 
-      if (settings.agents) {
-        cfg.agent ??= {}
-        for (const agent of agents) {
-          if (!settings.overwrite && cfg.agent[agent.name]) continue
-          cfg.agent[agent.name] = {
-            name: agent.name,
-            description: agent.description,
-            mode: agent.mode,
-            prompt: agent.prompt,
+function loadCommands() {
+  return fs
+    .readdirSync(commandsDir)
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => {
+      const name = path.basename(file, ".md")
+      const { data, body } = readMarkdown(path.join(commandsDir, file))
+      if (!data.description || !body) return undefined
+      return { name, description: data.description, template: body }
+    })
+    .filter(Boolean)
+}
+
+function shiftMentions(prompt, offset) {
+  if (!offset) return prompt
+
+  const shift = (list) =>
+    list?.map((item) =>
+      item?.mention
+        ? {
+            ...item,
+            mention: {
+              ...item.mention,
+              start: item.mention.start + offset,
+              end: item.mention.end + offset,
+            },
           }
-        }
-      }
+        : item,
+    )
 
-      if (settings.commands) {
-        cfg.command ??= {}
-        for (const name of commandNames) {
-          if (!settings.overwrite && cfg.command[name]) continue
-          const command = loadCommand(name)
-          if (command) cfg.command[name] = command
-        }
-      }
-    },
+  const shifted = { ...prompt }
+  for (const key of ["files", "agents", "skills"]) {
+    if (shifted[key]) shifted[key] = shift(shifted[key])
   }
+  return shifted
+}
+
+function renderCommand(template, args) {
+  const text = (args ?? "").trim()
+  const marker = "$ARGUMENTS"
+  const at = template.indexOf(marker)
+
+  if (at === -1) {
+    const prefix = template.trimEnd()
+    return { text: text ? `${prefix}\n\n${text}` : prefix, offset: text ? prefix.length + 2 : 0 }
+  }
+
+  return { text: template.replaceAll(marker, () => text), offset: at }
+}
+
+async function existingSkillIds(ctx) {
+  try {
+    const result = await ctx.skill.list()
+    return new Set((result?.data ?? []).map((skill) => skill.id))
+  } catch {
+    return new Set()
+  }
+}
+
+async function existingAgentIds(ctx) {
+  try {
+    const result = await ctx.agent.list()
+    return new Set((result?.data ?? []).map((agent) => agent.id))
+  } catch {
+    return new Set()
+  }
+}
+
+async function existingCommandNames(ctx) {
+  try {
+    const result = await ctx.command.list()
+    return new Set((result?.data ?? []).map((command) => command.name))
+  } catch {
+    return new Set()
+  }
+}
+
+async function registerSkills(ctx, overwrite) {
+  const existing = overwrite ? new Set() : await existingSkillIds(ctx)
+  const skills = loadSkills().filter((skill) => !existing.has(skill.id))
+  if (skills.length === 0) return
+
+  await ctx.skill.transform((editor) => {
+    for (const skill of skills) editor.add(skill)
+  })
+}
+
+async function registerAgents(ctx, overwrite) {
+  const existing = overwrite ? new Set() : await existingAgentIds(ctx)
+  const agents = loadAgents().filter((agent) => !existing.has(agent.name))
+  if (agents.length === 0) return
+
+  await ctx.agent.transform((editor) => {
+    for (const agent of agents) {
+      // AgentEditor.update() upserts: OpenCode creates the agent from
+      // Agent.Info.default(id) when the ID is not registered yet.
+      editor.update(agent.name, (item) => {
+        item.name = agent.name
+        item.description = agent.description
+        item.mode = agent.mode
+        item.system = agent.prompt
+      })
+    }
+  })
+}
+
+async function registerCommands(ctx, overwrite) {
+  const existing = overwrite ? new Set() : await existingCommandNames(ctx)
+  const commands = loadCommands().filter((command) => !existing.has(command.name))
+  if (commands.length === 0) return
+
+  await ctx.command.transform((editor) => {
+    for (const command of commands) {
+      editor.add({
+        name: command.name,
+        description: command.description,
+        execute: async ({ sessionID, prompt, delivery }) => {
+          const { text, offset } = renderCommand(command.template, prompt.text)
+          await ctx.session.prompt({
+            ...shiftMentions(prompt, offset),
+            sessionID,
+            text,
+            delivery,
+          })
+        },
+      })
+    }
+  })
+}
+
+// The exact shape returned by Plugin.define() from @opencode/plugin. Inlined so
+// a local plugin directory does not need its own node_modules with that package.
+export default {
+  id: PLUGIN_ID,
+  async setup(ctx) {
+    const settings = { ...DEFAULTS, ...(ctx.options && typeof ctx.options === "object" ? ctx.options : {}) }
+
+    if (settings.agents) await registerAgents(ctx, settings.overwrite)
+    if (settings.skills) await registerSkills(ctx, settings.overwrite)
+    if (settings.commands) await registerCommands(ctx, settings.overwrite)
+  },
 }
