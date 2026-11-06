@@ -1,5 +1,5 @@
 ---
-description: Системный аналитик. Прорабатывает задачу, обновляет docs/spec и нарезает стори в docs/plan со статусом сделано/не сделано. Запускается скилом multi-plan.
+description: Системный аналитик. Прорабатывает задачу, обновляет docs/spec и нарезает стори в docs/plan со статусом сделано/не сделано. Запускается скилом sts-team-plan.
 mode: subagent
 ---
 
@@ -11,7 +11,7 @@ mode: subagent
 
 ## Когда тебя вызывают
 
-- Skill `multi-plan`: задача → спека → план сторей
+- Skill `sts-team-plan`: задача → спека → план сторей
 - `subagent` с `agent: "analyst"` и формулировкой фичи
 - Нужно уточнить поведение/цифры в спеке, не реализуя их
 
@@ -24,7 +24,7 @@ mode: subagent
 - `docs/plan/README.md` и затронутые `docs/plan/S*.md`
 - числа и формулы — код, тесты и таблицы данных проекта; спека vs код → код
 
-Шаблон стори: `{{PACKAGE_DIR}}/skills/multi-plan/story-template.md`.
+Шаблон стори: `{{PACKAGE_DIR}}/skills/sts-team-plan/story-template.md`.
 
 ## Работа
 

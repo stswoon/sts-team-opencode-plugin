@@ -94,7 +94,7 @@ test("registers embedded skills", async () => {
   const { ctx, skills } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-plan"])
+  assert.deepEqual([...skills.keys()].sort(), ["sts-team-impl", "sts-team-plan"])
   for (const skill of skills.values()) {
     assert.equal(skill.autoinvoke, false)
     assert.equal(skill.id, skill.name)
@@ -111,14 +111,14 @@ test("registers embedded skills", async () => {
 test("substitutes N_SLOTS into embedded skills", async () => {
   const fallback = makeContext({ options: { slots: 0 } })
   await plugin.setup(fallback.ctx)
-  assert.match(fallback.skills.get("multi-impl").description, /до 4 стори/)
-  assert.match(fallback.skills.get("multi-impl").content, /Максимум \*\*4\*\*/)
+  assert.match(fallback.skills.get("sts-team-impl").description, /до 4 стори/)
+  assert.match(fallback.skills.get("sts-team-impl").content, /Максимум \*\*4\*\*/)
 
   const custom = makeContext({ options: { slots: 2 } })
   await plugin.setup(custom.ctx)
-  assert.match(custom.skills.get("multi-impl").description, /до 2 стори/)
-  assert.match(custom.skills.get("multi-impl").content, /Максимум \*\*2\*\*/)
-  assert.ok(!custom.skills.get("multi-impl").content.includes("{{N_SLOTS}}"))
+  assert.match(custom.skills.get("sts-team-impl").description, /до 2 стори/)
+  assert.match(custom.skills.get("sts-team-impl").content, /Максимум \*\*2\*\*/)
+  assert.ok(!custom.skills.get("sts-team-impl").content.includes("{{N_SLOTS}}"))
 })
 
 test("registers four subagents through the agent transform", async () => {
@@ -133,7 +133,7 @@ test("registers four subagents through the agent transform", async () => {
     assert.ok(!agent.system.includes("{{PACKAGE_DIR}}"))
   }
 
-  assert.ok(agents.get("analyst").system.includes(`${packageDirPosix}/skills/multi-plan/story-template.md`))
+  assert.ok(agents.get("analyst").system.includes(`${packageDirPosix}/skills/sts-team-plan/story-template.md`))
   assert.match(agents.get("dev").description, /Разработчик стори: пишет код/)
 })
 
@@ -141,10 +141,10 @@ test("registers commands and renders $ARGUMENTS", async () => {
   const { ctx, commands, prompts } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-plan"])
+  assert.deepEqual([...commands.keys()].sort(), ["sts-team-impl", "sts-team-plan"])
 
   const file = { uri: "file:///spec.md", mention: { start: 0, end: 3, text: "S01" } }
-  await commands.get("multi-plan").execute({
+  await commands.get("sts-team-plan").execute({
     sessionID: "ses_test",
     prompt: { text: "S01 $& $1", files: [file] },
     delivery: "queue",
@@ -154,7 +154,7 @@ test("registers commands and renders $ARGUMENTS", async () => {
   const sent = prompts[0]
   assert.equal(sent.sessionID, "ses_test")
   assert.equal(sent.delivery, "queue")
-  assert.ok(sent.text.includes('id: "multi-plan"'))
+  assert.ok(sent.text.includes('id: "sts-team-plan"'))
   assert.ok(sent.text.includes("S01 $& $1"))
   assert.ok(!sent.text.includes("$ARGUMENTS"))
 
@@ -164,9 +164,9 @@ test("registers commands and renders $ARGUMENTS", async () => {
 })
 
 test("overwrite: false keeps existing skills, agents and commands", async () => {
-  const existingSkill = { id: "multi-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
+  const existingSkill = { id: "sts-team-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
   const existingAgent = { id: "dev", name: "dev", description: "custom", mode: "subagent", system: "custom" }
-  const existingCommand = { name: "multi-plan", description: "custom" }
+  const existingCommand = { name: "sts-team-plan", description: "custom" }
   const { ctx, skills, agents, commands } = makeContext({
     options: { overwrite: false },
     skills: [existingSkill],
@@ -175,22 +175,22 @@ test("overwrite: false keeps existing skills, agents and commands", async () => 
   })
   await plugin.setup(ctx)
 
-  assert.equal(skills.get("multi-plan"), existingSkill)
+  assert.equal(skills.get("sts-team-plan"), existingSkill)
   assert.equal(agents.get("dev"), existingAgent)
   assert.equal(agents.get("dev").description, "custom")
-  assert.equal(commands.get("multi-plan"), existingCommand)
-  assert.ok(skills.has("multi-impl"))
+  assert.equal(commands.get("sts-team-plan"), existingCommand)
+  assert.ok(skills.has("sts-team-impl"))
   assert.ok(agents.has("qa"))
-  assert.ok(commands.has("multi-impl"))
+  assert.ok(commands.has("sts-team-impl"))
 })
 
 test("overwrite: true replaces changed skills and agents", async () => {
-  const existingSkill = { id: "multi-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
+  const existingSkill = { id: "sts-team-plan", name: "Custom", description: "custom", path: "/x", content: "custom" }
   const existingAgent = { id: "dev", name: "dev", description: "custom", mode: "subagent", system: "custom" }
   const { ctx, skills, agents } = makeContext({ skills: [existingSkill], agents: [existingAgent] })
   await plugin.setup(ctx)
 
-  assert.notEqual(skills.get("multi-plan").content, "custom")
+  assert.notEqual(skills.get("sts-team-plan").content, "custom")
   assert.notEqual(agents.get("dev").description, "custom")
   assert.ok(agents.get("dev").system.length > 200)
 })
