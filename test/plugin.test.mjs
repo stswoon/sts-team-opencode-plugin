@@ -90,11 +90,11 @@ test("exports a V2 plugin definition", () => {
   assert.equal(typeof plugin.setup, "function")
 })
 
-test("registers three embedded skills", async () => {
+test("registers embedded skills", async () => {
   const { ctx, skills } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-plan"])
+  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-plan"])
   for (const skill of skills.values()) {
     assert.equal(skill.autoinvoke, false)
     assert.equal(skill.id, skill.name)
@@ -103,7 +103,22 @@ test("registers three embedded skills", async () => {
     assert.ok(skill.path.endsWith(path.join(skill.id, "SKILL.md")))
     assert.ok(skill.content.length > 200)
     assert.ok(!skill.content.startsWith("---"))
+    assert.ok(!skill.description.includes("{{N_SLOTS}}"))
+    assert.ok(!skill.content.includes("{{N_SLOTS}}"))
   }
+})
+
+test("substitutes N_SLOTS into embedded skills", async () => {
+  const fallback = makeContext({ options: { slots: 0 } })
+  await plugin.setup(fallback.ctx)
+  assert.match(fallback.skills.get("multi-impl").description, /до 4 стори/)
+  assert.match(fallback.skills.get("multi-impl").content, /Максимум \*\*4\*\*/)
+
+  const custom = makeContext({ options: { slots: 2 } })
+  await plugin.setup(custom.ctx)
+  assert.match(custom.skills.get("multi-impl").description, /до 2 стори/)
+  assert.match(custom.skills.get("multi-impl").content, /Максимум \*\*2\*\*/)
+  assert.ok(!custom.skills.get("multi-impl").content.includes("{{N_SLOTS}}"))
 })
 
 test("registers four subagents through the agent transform", async () => {
@@ -122,11 +137,11 @@ test("registers four subagents through the agent transform", async () => {
   assert.match(agents.get("dev").description, /Разработчик стори: пишет код/)
 })
 
-test("registers three commands and renders $ARGUMENTS", async () => {
+test("registers commands and renders $ARGUMENTS", async () => {
   const { ctx, commands, prompts } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-plan"])
+  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-plan"])
 
   const file = { uri: "file:///spec.md", mention: { start: 0, end: 3, text: "S01" } }
   await commands.get("multi-plan").execute({

@@ -14,6 +14,12 @@ const DEFAULTS = {
   agents: true,
   commands: true,
   overwrite: true,
+  slots: 4,
+}
+
+function normalizeSlots(value) {
+  const slots = Number(value)
+  return Number.isInteger(slots) && slots > 0 ? slots : DEFAULTS.slots
 }
 
 function parseFrontmatter(text) {
@@ -55,7 +61,10 @@ function readMarkdown(file) {
   return parseFrontmatter(fs.readFileSync(file, "utf8"))
 }
 
-function loadSkills() {
+function loadSkills(slots) {
+  const slotsText = String(slots)
+  const withSlots = (text) => text.replaceAll("{{N_SLOTS}}", slotsText)
+
   return fs
     .readdirSync(skillsDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -69,12 +78,12 @@ function loadSkills() {
       return {
         id: entry.name,
         name: data.name ?? entry.name,
-        description: data.description,
+        description: withSlots(data.description),
         // V2 keeps accepting disable-model-invocation as a portability field,
         // but embedded skills must map it to autoinvoke explicitly.
         ...(String(data["disable-model-invocation"]).toLowerCase() === "true" ? { autoinvoke: false } : {}),
         path: file,
-        content: body,
+        content: withSlots(body),
       }
     })
     .filter(Boolean)
@@ -176,9 +185,9 @@ async function existingCommandNames(ctx) {
   }
 }
 
-async function registerSkills(ctx, overwrite) {
+async function registerSkills(ctx, overwrite, slots) {
   const existing = overwrite ? new Set() : await existingSkillIds(ctx)
-  const skills = loadSkills().filter((skill) => !existing.has(skill.id))
+  const skills = loadSkills(slots).filter((skill) => !existing.has(skill.id))
   if (skills.length === 0) return
 
   await ctx.skill.transform((editor) => {
@@ -235,9 +244,10 @@ export default {
   id: PLUGIN_ID,
   async setup(ctx) {
     const settings = { ...DEFAULTS, ...(ctx.options && typeof ctx.options === "object" ? ctx.options : {}) }
+    const slots = normalizeSlots(settings.slots)
 
     if (settings.agents) await registerAgents(ctx, settings.overwrite)
-    if (settings.skills) await registerSkills(ctx, settings.overwrite)
+    if (settings.skills) await registerSkills(ctx, settings.overwrite, slots)
     if (settings.commands) await registerCommands(ctx, settings.overwrite)
   },
 }
