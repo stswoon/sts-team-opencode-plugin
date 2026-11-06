@@ -220,12 +220,11 @@ test("every skill directory matches its frontmatter name", () => {
   }
 })
 
-test("no stale skill names from the source project", () => {
-  const stale = /\b(myimpl|myimpl2|myimpl3|myplan|mymarket)\b/
+test("no mentions of the source project or its skill names", () => {
+  const stale = /\b(myimpl|myimpl2|myimpl3|myplan|mymarket)\b|asteroid-defense-game/
+  const files = [path.join(packageDir, "README.md"), ...walk(skillsDir), ...walk(agentsDir), ...walk(commandsDir)]
 
-  for (const dir of [skillsDir, agentsDir, commandsDir]) {
-    for (const file of walk(dir)) {
-      assert.ok(!stale.test(fs.readFileSync(file, "utf8")), `${file} mentions a source-project skill name`)
-    }
+  for (const file of files) {
+    assert.ok(!stale.test(fs.readFileSync(file, "utf8")), `${file} mentions the source project`)
   }
 })
