@@ -90,11 +90,11 @@ test("exports a V2 plugin definition", () => {
   assert.equal(typeof plugin.setup, "function")
 })
 
-test("registers four embedded skills", async () => {
+test("registers three embedded skills", async () => {
   const { ctx, skills } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-impl2", "multi-plan"])
+  assert.deepEqual([...skills.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-plan"])
   for (const skill of skills.values()) {
     assert.equal(skill.autoinvoke, false)
     assert.equal(skill.id, skill.name)
@@ -122,11 +122,11 @@ test("registers four subagents through the agent transform", async () => {
   assert.match(agents.get("dev").description, /Разработчик стори: пишет код/)
 })
 
-test("registers four commands and renders $ARGUMENTS", async () => {
+test("registers three commands and renders $ARGUMENTS", async () => {
   const { ctx, commands, prompts } = makeContext()
   await plugin.setup(ctx)
 
-  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-impl2", "multi-plan"])
+  assert.deepEqual([...commands.keys()].sort(), ["multi-impl", "multi-impl-v3", "multi-plan"])
 
   const file = { uri: "file:///spec.md", mention: { start: 0, end: 3, text: "S01" } }
   await commands.get("multi-plan").execute({

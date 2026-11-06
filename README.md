@@ -2,7 +2,7 @@
 
 Пакет для [OpenCode](https://opencode.ai) **V2**: рабочий цикл **спека → стори → dev → QA → Lead** подключается одним плагином.
 
-Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl2,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты. Источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
+Копия `.cursor/skills/{multi-plan,multi-impl,multi-impl-v3}` и `.cursor/agents/{analyst,dev,qa,lead}` из проекта `asteroid-defense-game`, приспособленная для переноса в другие проекты. Источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта.
 
 ## Что внутри
 
@@ -11,10 +11,9 @@
 | `plugin.js` | Плагин OpenCode V2: регистрирует скилы, агентов и команды |
 | `skills/multi-plan/` | Скил планирования: спека + нарезка сторей (`SKILL.md`, `prompt-analyst.md`, `story-template.md`) |
 | `skills/multi-impl/` | Скил реализации: волна Dev → QA → Lead (`SKILL.md`, `prompt-dev.md`, `prompt-qa.md`, `prompt-lead.md`) |
-| `skills/multi-impl2/` | Скил непрерывного цикла: волна за волной через `multi-impl`, пока есть готовые стори и нет блокеров |
 | `skills/multi-impl-v3/` | Скил-планировщик слотов: 4 стори в работе, без волн |
 | `agents/` | Роли `analyst`, `dev`, `qa`, `lead` (тело файла — системный промпт) |
-| `commands/` | Шаблоны `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` с `$ARGUMENTS` |
+| `commands/` | Шаблоны `/multi-plan`, `/multi-impl`, `/multi-impl-v3` с `$ARGUMENTS` |
 
 Скил `mymarket` в пакет не входит — добавь копированием, если понадобится: `skills/<имя>/` + `agents/<роль>.md`.
 
@@ -25,8 +24,8 @@
 При загрузке, в `setup` V2-плагина:
 
 1. регистрирует субагентов `analyst`, `dev`, `qa`, `lead` через `ctx.agent.transform` (`editor.update` создаёт агента, если его ещё нет);
-2. регистрирует скилы через `ctx.skill.transform` — они доступны как `multi-plan`, `multi-impl`, `multi-impl2`, `multi-impl-v3` без копирования в проект;
-3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` через `ctx.command.transform`; `$ARGUMENTS` заменяется аргументами, а если плейсхолдера нет — аргументы дописываются в конец.
+2. регистрирует скилы через `ctx.skill.transform` — они доступны как `multi-plan`, `multi-impl`, `multi-impl-v3` без копирования в проект;
+3. регистрирует команды `/multi-plan`, `/multi-impl`, `/multi-impl-v3` через `ctx.command.transform`; `$ARGUMENTS` заменяется аргументами, а если плейсхолдера нет — аргументы дописываются в конец.
 
 ## Требования
 
@@ -68,7 +67,7 @@
 |-------|--------------|-------|
 | `skills` | `true` | регистрировать встроенные скилы |
 | `agents` | `true` | регистрировать `analyst` / `dev` / `qa` / `lead` |
-| `commands` | `true` | регистрировать `/multi-plan`, `/multi-impl`, `/multi-impl2`, `/multi-impl-v3` |
+| `commands` | `true` | регистрировать `/multi-plan`, `/multi-impl`, `/multi-impl-v3` |
 | `overwrite` | `true` | перекрывать скилы, команды и агентов с теми же ID; `false` — существующие не трогать |
 
 Конфиг в V2 перечитывается без перезапуска. Если менялся код локального плагина, может понадобиться `/reload` или `opencode service restart`.
@@ -84,7 +83,6 @@
 ```
 /multi-plan <задача>        — analyst: спека + стори со статусами
 /multi-impl <Sxx …>         — одна волна: Dev → QA → Lead, статус «сделано» после LEAD_PASS
-/multi-impl2 <Sxx …>        — волны подряд, пока есть готовые стори и нет блокирующих замечаний
 /multi-impl-v3 <Sxx …>      — планировщик слотов: 4 стори в работе, новая берётся по освобождению
 /multi-impl без аргументов  — все готовые стори одной волной
 ```
