@@ -1,0 +1,27 @@
+test/plugin.test.mjs
+  s_55be7a4354a4ad::t_47ef75834648b3 93,97
+package.json
+  s_55be7a4354a4ad::t_356bd8378356d2 4
+README.md
+  s_55be7a4354a4ad::t_b12b97885c01e2 27-28
+  s_55be7a4354a4ad::t_1db4dd0a4d76d8 70
+  s_55be7a4354a4ad::t_5f65fb8189bb40 16
+skills/multi-impl-v3/SKILL.md
+  s_55be7a4354a4ad::t_7d6fc0ac731f81 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "650fd7b3cb5d0d4258748e726c8f26d47aa26e4c",
+  "prompts": {},
+  "sessions": {
+    "s_55be7a4354a4ad": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dd9dd8affdwU6Ahv17L95GcV",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
