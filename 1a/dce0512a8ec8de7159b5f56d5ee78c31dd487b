@@ -1,0 +1,50 @@
+test/plugin.test.mjs
+  s_8ecbe03c1a953f::t_22649a2fd01077 97,140
+  s_8ecbe03c1a953f::t_69a7c470652490 106-107,111-121
+  s_8ecbe03c1a953f::t_f39fa529240b71 144
+  s_8ecbe03c1a953f::t_dded9372bc724b 122-123
+  h_06e01297fc405a 93
+skills/multi-impl/SKILL.md
+  s_8ecbe03c1a953f::t_259639ddb66a66 198-201
+  h_06e01297fc405a 56,99,151
+  s_8ecbe03c1a953f::t_1e6b41d3e096b6 5-7,16-20,67,72-90,92,94-98,100-114,120-135,137-141,143-144,150,166-178,180,182,185-189,195-196,209,213-214
+  s_8ecbe03c1a953f::t_7be40ce54bc0a2 4,69-70
+  s_8ecbe03c1a953f::t_a6237acc5c0870 68
+  s_8ecbe03c1a953f::t_3f688ea8c2bb7e 71
+  h_06e01297fc405a 34-35,40-41,43-46,152-154,156-159
+README.md
+  s_8ecbe03c1a953f::t_cbe51e1ec160b5 30-33
+  s_8ecbe03c1a953f::t_7bd43ae22c0978 81
+  s_8ecbe03c1a953f::t_2f57fae63b17dc 90-95,101
+  s_8ecbe03c1a953f::t_dc0c3816073bbd 102-103,106-110,119
+  h_06e01297fc405a 13,78
+  s_8ecbe03c1a953f::t_06ce952c13c4bb 28-29
+  s_8ecbe03c1a953f::t_6e43f35c4f584d 82-83
+  h_06e01297fc405a 3-4,6-8,12,14-18,38-39,52-54,66-68,74-75,77,79-80,85-86,121-122,126-127
+package.json
+  s_8ecbe03c1a953f::t_79adbc77698dfb 4
+plugin.js
+  s_8ecbe03c1a953f::t_7194d2c6d3a9ec 64-67,81,86,188,190,247,250
+  h_06e01297fc405a 17-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1adce0512a8ec8de7159b5f56d5ee78c31dd487b",
+  "prompts": {},
+  "humans": {
+    "h_06e01297fc405a": {
+      "author": "stswoon <xx@xx.xx>"
+    }
+  },
+  "sessions": {
+    "s_8ecbe03c1a953f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dd940a4ffdDe7pYBs1qA1wML",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
