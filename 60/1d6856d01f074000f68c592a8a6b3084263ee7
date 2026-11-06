@@ -1,0 +1,77 @@
+skills/multi-plan/prompt-analyst.md
+  s_550309c2552b20::t_bc28ded5ced5d8 16,20-23
+agents/lead.md
+  s_550309c2552b20::t_b7e70f451f7f43 32
+agents/analyst.md
+  s_550309c2552b20::t_c9ce512daaf922 88
+  h_06e01297fc405a 10,54
+  s_550309c2552b20::t_603d5490759331 8,35-37,45,69-70,78-81,86-87,89-96,102-105
+  s_550309c2552b20::t_48283cd95bdda5 82-84
+agents/dev.md
+  s_550309c2552b20::t_a6353bfda534ec 9-10,25,29-35
+  s_550309c2552b20::t_63a4173b532246 38-39
+  s_550309c2552b20::t_c6b51388cfb90d 36-37
+  h_06e01297fc405a 2-3,44-50
+agents/qa.md
+  s_550309c2552b20::t_5848a51bbd05c0 43-45,64-67
+  h_06e01297fc405a 72-74,91,95,99,103
+  s_550309c2552b20::t_410888effa164a 8,31-32,34-39,41-42,46-52,54,68-70,79-82,84-85,115-116,119-120
+  s_550309c2552b20::t_bbfa6eb6d8b374 53,55-60
+agents/README.md
+  s_550309c2552b20::t_a66100ec5d8879 5,7-10,14-15,17-18,20-22
+  h_06e01297fc405a 6
+skills/multi-plan/story-template.md
+  s_550309c2552b20::t_f2818ab1752b89 4
+  s_550309c2552b20::t_aed24176f8a20c 35
+  s_a34c15236df126::t_27e2723599330d 24
+README.md
+  s_550309c2552b20::t_7fb0aaccb2c504 131-132
+  s_550309c2552b20::t_18d45efafdc559 38-40
+  h_06e01297fc405a 6-8,20
+skills/multi-plan/SKILL.md
+  s_550309c2552b20::t_9ca379d587170d 73-74
+  s_550309c2552b20::t_c6cbe18135615d 62
+  s_550309c2552b20::t_f34a4701b95cc4 53-54
+  s_550309c2552b20::t_9049c282da892a 61,63-66,104
+  h_06e01297fc405a 96-99,108-111
+  s_550309c2552b20::t_b857ec77e15e96 71-72
+  h_06e01297fc405a 13-14,44-45,76,79-81,83-84,87-95
+test/plugin.test.mjs
+  s_550309c2552b20::t_d2fba4a703c4e1 223,225,227-228
+  s_550309c2552b20::t_8511f3e7fbd9f7 224
+skills/multi-impl/SKILL.md
+  s_550309c2552b20::t_18c3ed5b0b7fdd 184
+  s_550309c2552b20::t_6857525c441167 84-85
+  s_550309c2552b20::t_dfb1183509fd5f 159
+  s_550309c2552b20::t_54678358fa3d35 100
+  s_a34c15236df126::t_9512a1a3506224 134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "601d6856d01f074000f68c592a8a6b3084263ee7",
+  "prompts": {},
+  "humans": {
+    "h_06e01297fc405a": {
+      "author": "stswoon <xx@xx.xx>"
+    }
+  },
+  "sessions": {
+    "s_550309c2552b20": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dcdf0e1ffdfxN2yFyUSUfj9f",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    },
+    "s_a34c15236df126": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4dd0b9ebffdFSs6zxl6r4X9uH",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
