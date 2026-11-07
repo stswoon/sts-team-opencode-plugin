@@ -1,0 +1,45 @@
+commands/sts-team-plan.md
+  h_06e01297fc405a 5
+skills/sts-team-impl/SKILL.md
+  h_06e01297fc405a 2,6,11,23,25,36,45,49,80-81,94,121,126,130,137,139,157,163-166,184-185,188-189,198,207,212,216
+agents/README.md
+  h_06e01297fc405a 7-8,12,15-16
+  h_06e01297fc405a 5-6,9-10,13,17
+skills/sts-team-plan/SKILL.md
+  h_06e01297fc405a 2,6,11,20,27,33,36-41,43-48,109,111,117,124
+  h_06e01297fc405a 42
+skills/sts-team-plan/story-template.md
+  h_06e01297fc405a 3
+commands/sts-team-impl.md
+  h_06e01297fc405a 5
+README.md
+  h_06e01297fc405a 3,17,31,37,77,87-88,90,93,95,97-99,101,103,106
+  h_06e01297fc405a 89
+agents/dev.md
+  h_06e01297fc405a 3,14,23
+  h_06e01297fc405a 24
+agents/analyst.md
+  h_06e01297fc405a 2-4,16,62,65-68,70-71,108
+agents/qa.md
+  h_06e01297fc405a 2,14,24-25,47,84
+agents/lead.md
+  h_06e01297fc405a 2,8,11,16,27-29,50,56,58,60
+  h_06e01297fc405a 9,12,33-44,46-48,64-66
+skills/sts-team-impl/prompt-dev.md
+  h_06e01297fc405a 21-22,26-28,30-32
+skills/sts-team-impl/prompt-lead.md
+  h_06e01297fc405a 19-20,32-33,37-39
+skills/sts-team-impl/prompt-qa.md
+  h_06e01297fc405a 31-32,36-38,40-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b1ea21e944486ffc6c9cec2a9f9b4beb68a10f31",
+  "prompts": {},
+  "humans": {
+    "h_06e01297fc405a": {
+      "author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
