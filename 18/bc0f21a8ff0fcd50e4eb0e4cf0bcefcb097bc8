@@ -1,0 +1,110 @@
+agents/qa.md
+  s_bc9732980987cc::t_f7768e07472ab9 2
+  s_bc9732980987cc::t_adbb719bd377c0 133-136
+  s_bc9732980987cc::t_d165c8edfba984 24-25
+  s_bc9732980987cc::t_a897dcbe7087b8 77-88
+  s_bc9732980987cc::t_923af2a1499bf2 121-125
+package.json
+  s_bc9732980987cc::t_b355b2e4be6c2a 4
+README.md
+  s_bc9732980987cc::t_4b0b884975eb6c 98-100
+  s_bc9732980987cc::t_1344419f71f7ce 3,11,13-14,16-17,29,37-39,63,79-81,87,89-96
+  h_06e01297fc405a 12,54,70-72
+  s_bc9732980987cc::t_4ee7d37cb0fd3c 74
+  s_bc9732980987cc::t_5111f190e53954 15
+agents/dev.md
+  s_bc9732980987cc::t_088aaeb59c2a9f 53-62,73
+  s_bc9732980987cc::t_47763241fa2491 14
+test/plugin.test.mjs
+  s_bc9732980987cc::t_bb577cd1830230 167,170-173,175
+  s_bc9732980987cc::t_d45f44172ceb38 144,147
+  s_bc9732980987cc::t_bb7fe842b2ef65 166,168-169,174,176-179
+  s_bc9732980987cc::t_47c62490b48091 202,207
+  s_bc9732980987cc::t_7ee4224108904b 136
+  s_bc9732980987cc::t_13c43d0ae60526 97
+  s_bc9732980987cc::t_d066c4f5f94c3c 157
+  s_bc9732980987cc::t_4e9b49ce9fa46f 114-115,119-121
+  s_bc9732980987cc::t_c1f22f6e7d9a23 181,183
+  s_bc9732980987cc::t_f92a5ae1a604f8 192,195-196,198
+  s_bc9732980987cc::t_e0dced0a0f5caa 237-238
+commands/stsTeamImpl.md
+  s_bc9732980987cc::t_82b6c61ccef916 2
+skills/stsTeamImpl/prompt-qa.md
+  s_bc9732980987cc::t_6eda5b12774e78 43-45
+skills/stsTeamImpl/SKILL.md
+  s_bc9732980987cc::t_af68f6abbf7f84 117-121
+  s_bc9732980987cc::t_c2053fb0728cd8 39
+  s_bc9732980987cc::t_f04f7c100a68cb 172-182
+  s_bc9732980987cc::t_b7a5ece8e3335c 104-106
+  s_bc9732980987cc::t_12d019f9695e1e 27-28
+  s_bc9732980987cc::t_0af47280957f11 237-249
+  s_bc9732980987cc::t_e36a5dd4b52b68 97-98
+  s_bc9732980987cc::t_9f22bc88a2e9cf 184-190
+  s_bc9732980987cc::t_9c62a6b41de8d2 75-76
+  s_bc9732980987cc::t_e1133ef52e6737 86-89
+  s_bc9732980987cc::t_ea0c66d2a9c921 52-59
+  s_bc9732980987cc::t_6a80eb60fcd247 107-108
+  s_bc9732980987cc::t_8586e9d32b5a51 195-203
+  s_bc9732980987cc::t_3731e77bb39509 226-232
+  s_bc9732980987cc::t_ce4c009fa97aa4 71
+  s_bc9732980987cc::t_f696205036febb 138-156
+  s_bc9732980987cc::t_a3d41ae5945c47 5
+  s_bc9732980987cc::t_7af790420f6375 133-134
+  s_bc9732980987cc::t_424f55ce6825c8 13-15
+  s_bc9732980987cc::t_dec46be6774749 209-217
+  s_febab0a2d19cb8::t_a278b79bf8efea 183
+skills/stsTeamImpl/prompt-dev.md
+  s_bc9732980987cc::t_935a1d752758e7 33-35
+agents/lead.md
+  s_bc9732980987cc::t_8960b67b4f62db 28-29
+  s_bc9732980987cc::t_d28f25c6af8ec4 8-9
+  s_bc9732980987cc::t_8a2d8b78d05120 72
+  s_bc9732980987cc::t_d0cb862d882eb7 34-35
+skills/stsTeamPlan/prompt-analyst.md
+  s_bc9732980987cc::t_8a566d54c1d39e 11-13
+agents/analyst.md
+  s_bc9732980987cc::t_22f8d8eb3152c8 53
+  s_bc9732980987cc::t_1ef4a870316062 60,62-65,67-68,70-72
+  s_bc9732980987cc::t_3b9b94d05171a5 43-44
+  s_bc9732980987cc::t_f8d3b5a0a58049 3-4
+  s_bc9732980987cc::t_bc701211e02ac3 29
+agents/README.md
+  s_bc9732980987cc::t_90ff6566954121 12-14,17-18
+skills/stsTeamPlan/story-template.md
+  s_bc9732980987cc::t_7ca8419b13d573 4-10
+skills/stsTeamPlan/SKILL.md
+  s_bc9732980987cc::t_e20cb4377dca45 118
+  s_bc9732980987cc::t_56bf76ff82fd8f 5-6
+  s_bc9732980987cc::t_706d3bfbc27f9c 20
+  s_bc9732980987cc::t_03c661e736cb32 30-47
+  s_bc9732980987cc::t_c7718ad2c697c5 99-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "18bc0f21a8ff0fcd50e4eb0e4cf0bcefcb097bc8",
+  "prompts": {},
+  "humans": {
+    "h_06e01297fc405a": {
+      "author": "stswoon <xx@xx.xx>"
+    }
+  },
+  "sessions": {
+    "s_bc9732980987cc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4acd51eeffdbUrfhdlgHWBkfo",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    },
+    "s_febab0a2d19cb8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e4b121f91ffdCZanPyWmxn6W9i",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
