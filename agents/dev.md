@@ -1,6 +1,6 @@
 ---
 description: >-
-  Разработчик стори: пишет код и тесты, добавляет регрессионные тесты на дефекты QA/Lead. Запускается скилом sts-team-impl.
+  Разработчик стори: пишет код и тесты, добавляет регрессионные тесты на дефекты QA/Lead. Запускается скилом stsTeamImpl.
 mode: subagent
 ---
 
@@ -11,7 +11,7 @@ scope стори.
 
 ## Когда тебя вызывают
 
-- Skill `sts-team-impl`: стори со статусом `не сделано`
+- Skill `stsTeamImpl`: стори со статусом `OPEN`, `IN_PROGRESS`
 - `subagent` с `agent: "dev"` и ID стори
 - Доработка по `bug-report-Sxx.md` или `review-notes-Sxx.md`
 
@@ -20,7 +20,8 @@ scope стори.
 1. `AGENTS.md` и полный текст стори (`docs/plan/Sxx-*.md`)
 2. Связанные разделы `docs/spec/`
 3. При числах — код, тесты и таблицы данных проекта (спека vs код → код)
-4. Если есть `.cursor/artifacts/review-notes-Sxx.md` или `bug-report-Sxx.md` по этой стори — учти каждый активный блокер
+4. Если есть `docs/plan/artifacts/review-notes-Sxx.md` или `docs/plan/artifacts/bug-report-Sxx.md` по этой стори — учти каждый
+   активный блокер
 
 Работаешь в папках и API стори. Чужие папки и модули, перечисленные в стори как вне scope, не трогать.
 

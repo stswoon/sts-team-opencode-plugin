@@ -1,7 +1,6 @@
 # sts-team-opencode-plugin
 
-Пакет для [OpenCode](https://opencode.ai) **V2**: рабочий цикл **спека → стори → dev → QA → Lead** подключается одним
-плагином.
+Плагин для [OpenCode](https://opencode.ai) **V2**: рабочий цикл **спека → стори → dev → QA → Lead** .
 
 Плагин не зависит от стека и предметной области: цикл работает в любом проекте, где есть `AGENTS.md`, `docs/spec/`,
 `docs/plan/`, код и тесты. Источник правды — `AGENTS.md`, `docs/spec/`, код и тесты проекта; роли читают оттуда стек,
@@ -15,7 +14,7 @@
 | `skills/sts-team-plan/` | Скил планирования: спека + нарезка сторей (`SKILL.md`, `prompt-analyst.md`, `story-template.md`)                                                                 |
 | `skills/sts-team-impl/` | Скил реализации: планировщик слотов (до N_SLOTS стори в работе, по умолчанию 4), Dev → QA → Lead (`SKILL.md`, `prompt-dev.md`, `prompt-qa.md`, `prompt-lead.md`) |
 | `agents/`               | Роли `analyst`, `dev`, `qa`, `lead` (тело файла — системный промпт)                                                                                              |
-| `commands/`             | Шаблоны `/sts-team-plan`, `/sts-team-impl` с `$ARGUMENTS`                                                                                                        |
+| `commands/`             | Шаблоны `/stsTeamPlan`, `/stsTeamImpl` с `$ARGUMENTS`                                                                                                            |
 
 Свои скилы добавляй копированием: `skills/<имя>/` + при необходимости `agents/<роль>.md`.
 
@@ -29,19 +28,17 @@
    если его ещё нет);
 2. регистрирует скилы через `ctx.skill.transform` — они доступны как `sts-team-plan`, `sts-team-impl` без
    копирования в проект;
-3. регистрирует команды `/sts-team-plan`, `/sts-team-impl` через `ctx.command.transform`; `$ARGUMENTS` заменяется
+3. регистрирует команды `/stsTeamPlan`, `/stsTeamImpl` через `ctx.command.transform`; `$ARGUMENTS` заменяется
    аргументами, а если плейсхолдера нет — аргументы дописываются в конец.
 
 ## Требования
 
 - OpenCode **2.x** (V2 plugin API; код совместим с `@opencode/plugin` 2.2.x).
-- Проект со структурой `AGENTS.md` + `docs/spec/` + `docs/plan/`; `sts-team-plan` создаёт недостающие файлы при первом
+- Проект со структурой `AGENTS.md` + `docs/spec/` + `docs/plan/`; `stsTeamPlan` создаёт недостающие файлы при первом
   запуске. Стек, команды сборки/тестов/запуска и границы модулей проект описывает в `AGENTS.md` — плагин их не
   навязывает.
 
 ## Подключение
-
-### A. Плагином (рекомендуется)
 
 `opencode.json` — в проекте или глобальный `~/.config/opencode/opencode.json`:
 
@@ -77,59 +74,36 @@
 |-------------|--------------|--------------------------------------------------------------------------------------|
 | `skills`    | `true`       | регистрировать встроенные скилы                                                      |
 | `agents`    | `true`       | регистрировать `analyst` / `dev` / `qa` / `lead`                                     |
-| `commands`  | `true`       | регистрировать `/sts-team-plan`, `/sts-team-impl`                                    |
+| `commands`  | `true`       | регистрировать `/stsTeamPlan`, `/stsTeamImpl`                                        |
 | `overwrite` | `true`       | перекрывать скилы, команды и агентов с теми же ID; `false` — существующие не трогать |
 | `slots`     | `4`          | максимум стори «в работе»; подставляется в скил вместо `{{N_SLOTS}}`                 |
 
 Конфиг в V2 перечитывается без перезапуска. Если менялся код локального плагина, может понадобиться `/reload` или
 `opencode service restart`.
 
-### B. Без плагина
-
-- Скилы: `"skills": ["D:/mycode/sts-team-opencode-plugin/skills"]`; замени `{{N_SLOTS}}` в `skills/sts-team-impl/SKILL.md`
-  на нужное число (по умолчанию 4).
-- Агенты: скопировать `agents/*.md` в `.opencode/agents/` и заменить `{{PACKAGE_DIR}}` в `analyst.md` на путь к пакету.
-  Либо описать роли в секции `agents` конфига.
-- Команды: скопировать `commands/*.md` в `.opencode/commands/` или вызывать скилы через `@sts-team-plan` / инструмент
-  `skill` с `id: "sts-team-plan"`.
-
 ## Использование
 
 ```
-/sts-team-plan <задача>        — analyst: спека + стори со статусами
-/sts-team-impl <Sxx …>         — планировщик слотов: до N_SLOTS в работе (по умолчанию 4), новая берётся по освобождению,
-                                 Dev → QA → Lead, статус «сделано» после LEAD_PASS
-/sts-team-impl без аргументов  — все готовые стори подряд, пока есть готовые
+/stsTeamPlan <задача>        — analyst: спека + стори со статусами
+/stsTeamImpl <Sxx …>         — планировщик слотов: до N_SLOTS в работе (по умолчанию 4), новая берётся по освобождению,
+                                   Dev → QA → Lead, статус «сделано» после LEAD_PASS
+/stsTeamImpl без аргументов  — все готовые стори подряд, пока есть готовые
 ```
-
-Поведение бывшего `/multi-impl-v3` стало основным `/sts-team-impl`; отдельные команда и скил `multi-impl-v3` больше не
-нужны.
-
-Субагентов оркестратор запускает сам (инструмент `subagent`); вручную — тем же инструментом с `agent: "analyst"` /
-`"dev"` / `"qa"` / `"lead"`.
 
 ## Артефакты
 
-Скилы и роли пишут в проект, в `.cursor/artifacts/`:
+Скилы и роли пишут в проект в:
 
-- `decisions.md` — журнал допущений `D…` (ведёт оркестратор `sts-team-impl`);
+- `docs/plan/` - список задач 
+- `docs/spec/` - спецификацию через 
+- `.temp` - временные файлы
+
+A также в `docs/plan/artifacts/`:
+
+- `decisions.md` — журнал допущений `D…` (ведёт оркестратор `stsTeamImpl`);
 - `bug-report-Sxx.md` — отчёт QA;
 - `review-notes-Sxx.md` — замечания Lead;
-- `scheduler.md` — статусборд `sts-team-impl`.
-
-Путь оставлен от Cursor-версии, чтобы файлы не разъезжались между инструментами. Если `.cursor/` не нужен — замени путь
-в скилах и агентах на удобный.
-
-## Отличия V2-версии
-
-- Плагин больше не использует V1 `config`-хук и мутацию `cfg.skills` / `cfg.agent` / `cfg.command`: скилы, агенты и
-  команды регистрируются через `ctx.skill.transform` / `ctx.agent.transform` / `ctx.command.transform`.
-- Конфиг: `plugin` → `plugins`; tuple `[path, options]` → объект `{ package, options }`.
-- В командах инструмент `skill` вызывается по `id`, а не по `name`.
-- ID агента берётся из имени файла `agents/*.md`; frontmatter `name` в V2 не нужен.
-- Ссылки вида `.cursor/agents/*.md` заменены на имена субагентов, которых регистрирует плагин.
-- Формулировки не привязаны к стеку: роли берут стек, команды и границы из `AGENTS.md`, `docs/spec/`, кода и тестов
-  проекта.
+- `scheduler.md` — статусборд `stsTeamImpl`.
 
 ## Тест
 
