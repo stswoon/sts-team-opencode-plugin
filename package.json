@@ -1,7 +1,7 @@
 {
   "name": "@stswoon/sts-team-opencode-plugin",
-  "version": "1.0.0",
-  "description": "OpenCode V2 plugin: SDD workflow skills stsTeamPlan/stsTeamImpl and subagents analyst/dev/qa/lead",
+  "version": "2.0.0",
+  "description": "OpenCode V2 Spec Kit plugin: parallel Dev → QA → Lead → Analyst workflow (stsTeamPlan/stsTeamImpl)",
   "type": "module",
   "main": "./plugin.js",
   "exports": {
@@ -9,6 +9,7 @@
   },
   "files": [
     "plugin.js",
+    "speckit.js",
     "skills",
     "agents",
     "commands",

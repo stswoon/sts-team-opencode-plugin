@@ -1,6 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
+import { adjustMentions, transformSpeckitPrompt } from "./speckit.js"
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 const packageDirPosix = packageDir.replaceAll("\\", "/")
@@ -15,6 +16,7 @@ const DEFAULTS = {
   commands: true,
   overwrite: true,
   slots: 4,
+  speckit: true,
 }
 
 function normalizeSlots(value) {
@@ -238,6 +240,53 @@ async function registerCommands(ctx, overwrite) {
   })
 }
 
+function findSpecKitRoot(directory) {
+  if (!directory) return undefined
+  let current = path.resolve(directory)
+  for (let i = 0; i < 20; i++) {
+    if (fs.existsSync(path.join(current, ".specify"))) return current
+    const parent = path.dirname(current)
+    if (parent === current) break
+    current = parent
+  }
+  return undefined
+}
+
+function hasCmdWrappers(directory) {
+  return (
+    Boolean(directory) &&
+    process.platform === "win32" &&
+    fs.existsSync(path.join(directory, ".specify", "scripts", "powershell", "check-prerequisites.cmd"))
+  )
+}
+
+async function registerSpeckitPromptHook(ctx, settings, slots) {
+  if (!settings.speckit) return undefined
+  if (typeof ctx.session?.hook !== "function") return undefined
+
+  const directory = ctx.location?.directory ?? ""
+  const specKitRoot = findSpecKitRoot(directory)
+  return ctx.session.hook("prompt", (event) => {
+    try {
+      const prompt = event?.prompt
+      if (!prompt || typeof prompt.text !== "string") return
+
+      const result = transformSpeckitPrompt({
+        text: prompt.text,
+        slots,
+        hasSpecKit: Boolean(specKitRoot),
+        cmdWrappers: Boolean(specKitRoot) && hasCmdWrappers(specKitRoot),
+      })
+      if (!result.changed) return
+
+      prompt.text = result.text
+      adjustMentions(prompt, result)
+    } catch (error) {
+      console.error("[sts-team] speckit prompt hook failed:", error)
+    }
+  })
+}
+
 // The exact shape returned by Plugin.define() from @opencode/plugin. Inlined so
 // a local plugin directory does not need its own node_modules with that package.
 export default {
@@ -249,5 +298,11 @@ export default {
     if (settings.agents) await registerAgents(ctx, settings.overwrite)
     if (settings.skills) await registerSkills(ctx, settings.overwrite, slots)
     if (settings.commands) await registerCommands(ctx, settings.overwrite)
+
+    const speckitHook = await registerSpeckitPromptHook(ctx, settings, slots)
+
+    return () => {
+      void speckitHook?.dispose?.()
+    }
   },
 }
