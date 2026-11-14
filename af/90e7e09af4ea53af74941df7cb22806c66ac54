@@ -1,0 +1,87 @@
+plugin.js
+  s_2d5136a82ce896::t_37f3a73684fd98 263-267,269-276,279-289,302-306
+  s_2d5136a82ce896::t_b43ac515668454 255-262
+  s_2d5136a82ce896::t_ce762c873ac7a8 243-254,268,277-278
+  s_2d5136a82ce896::t_ff21649b3ed238 301
+  s_2d5136a82ce896::t_ebd4d988d7fc21 4,19
+README.md
+  s_2d5136a82ce896::t_26f1c4c29e6ea2 80-81
+  s_2d5136a82ce896::t_ca2e64b77f7598 51-52
+  s_2d5136a82ce896::t_1847449d1069f6 1-26,30-37,39,41,43-46,48-49,56-59,63,70,72-73,82-87,89,93-113,115-121,124-162,165-179,181-182,184-191,195
+test/plugin.test.mjs
+  s_2d5136a82ce896::t_5f4109328ec8da 127,133,301
+  s_2d5136a82ce896::t_69f4410dbf7b12 263-277
+  s_2d5136a82ce896::t_c0b5e3d982914d 7,14-18,33,38,42,86-89,96,125-126,131-132,149-152,195-214,224-262,278-300,302-311
+  s_2d5136a82ce896::t_2a4227c2f05957 215-223
+  s_2d5136a82ce896::t_80da97ce295e5b 312
+skills/stsTeamPlan/prompt-tasks.md
+  s_2d5136a82ce896::t_0da419ab49b59f 12-13
+  s_2d5136a82ce896::t_ab4e6181530db9 1-11,14-48
+commands/stsTeamPlan.md
+  s_2d5136a82ce896::t_9bbf885a909dd6 2,5,8-9
+skills/stsTeamImpl/SKILL.md
+  s_2d5136a82ce896::t_62935a3a54fabd 4-7,11,13,17-18,23-24,26-81,85-86,90-93,99-102,104-107,110,112,114,118,122,126-138,140-141,143-144,148-154,156-158,162-180,183-184,190-197,200-203,205-211,213-233,237-244,260,262-267,272,278,281-284,286,294,296,299-305,309,312-316,318,322-326,328-329,331-333,335
+  s_2d5136a82ce896::t_c5eb621d6fb241 185-187
+  s_2d5136a82ce896::t_46c91e53ccfd8c 246-249,251,253-258
+  s_2d5136a82ce896::t_f397cb6100e44a 198-199
+  s_2d5136a82ce896::t_4e0385f699e21b 245
+agents/qa.md
+  s_2d5136a82ce896::t_7dc60aa3331578 2-5,11-12,16-17,20,24,26-28,35,39-40,42-51,54-58,64-65,70-72,75-77,92,98,100-101,103-106,109,136,138,141,143,148
+  s_2d5136a82ce896::t_bfce66e2bd5e6f 36-38
+test/fixtures/speckit-tasks.md
+  s_2d5136a82ce896::t_7ac97d2bbf78c9 1-32
+agents/README.md
+  s_2d5136a82ce896::t_2b1eb19a8052fb 3-4,6-11,13-14,18-19,21-23
+test/fixtures/speckit-project/.specify/feature.json
+  s_2d5136a82ce896::t_9f56b322b48818 1-3
+skills/stsTeamPlan/tasks-metadata-template.md
+  s_2d5136a82ce896::t_3237a05e164f64 1-52
+skills/stsTeamImpl/prompt-dev.md
+  s_2d5136a82ce896::t_08a015154e05c2 7-9,11,13-18,28-37,41-53,55-61,63
+speckit.js
+  s_2d5136a82ce896::t_8d3fe9f5410db4 36
+  s_2d5136a82ce896::t_81ccda49f26ea0 1-35,37-67,73-74,76,79,82-86,88-97,99-104,107,109-115,119-125,127-165
+  s_2d5136a82ce896::t_b7f8607f9378ce 68-72,75,77-78,80-81,87,98,105-106,108
+  s_2d5136a82ce896::t_2b6753f3e070ab 126
+  s_2d5136a82ce896::t_0e9da97919fbea 116-118
+agents/lead.md
+  s_2d5136a82ce896::t_16e9f8c9ed4d7c 33-36
+  s_2d5136a82ce896::t_f9b887dab3a5f8 2-4,10-11,13,17,25-29,37-44,46-48,51-52,54-56,59,74,76-77,79-80
+skills/stsTeamImpl/prompt-qa.md
+  s_2d5136a82ce896::t_4326544e38b35c 7-9,32-40,44-57,60-63,65,67
+  s_2d5136a82ce896::t_d4696fd2cc3278 58-59
+skills/stsTeamImpl/prompt-analyst.md
+  s_2d5136a82ce896::t_70b998a971e8ee 1-39,42-76
+  s_2d5136a82ce896::t_22b66a2a8ef927 40-41
+agents/dev.md
+  s_2d5136a82ce896::t_46e80b09d93815 3-4,11,15-17,21-24,26,30-34,36-38,40-43,49-53,67,69-75
+skills/stsTeamPlan/SKILL.md
+  s_2d5136a82ce896::t_494e8ea9f49b37 4-6,10,12-13,16,19,21,23,25-27,29-30,32,34-56,60-62,64,66,68-70,79-82,84-85
+package.json
+  s_2d5136a82ce896::t_d19fcc735729e3 3-4,12
+test/fixtures/speckit-implement.md
+  s_2d5136a82ce896::t_f05958c3f5a6c3 1-40
+agents/analyst.md
+  s_2d5136a82ce896::t_03ea0611582bfb 3-4,8,10-11,17-21,23,25,27,29,31,33,35-44,46,48,50,52,54-60,62-63,65,67-70,72,74-78
+skills/stsTeamImpl/prompt-lead.md
+  s_2d5136a82ce896::t_083e281d5511f2 7-9,15,33-34,38-67,69-70
+  s_2d5136a82ce896::t_6a03df5682c165 20-21
+commands/stsTeamImpl.md
+  s_2d5136a82ce896::t_b0a31114e19bf0 2,5,8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "af90e7e09af4ea53af74941df7cb22806c66ac54",
+  "prompts": {},
+  "sessions": {
+    "s_2d5136a82ce896": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e29e6d1ddffekYHVZ3ZCCQBkxJ",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "stswoon <xx@xx.xx>"
+    }
+  }
+}
